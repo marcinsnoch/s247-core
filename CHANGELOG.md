@@ -4,6 +4,16 @@ Wszystkie istotne zmiany w serwisie backendowym `s247-core` są dokumentowane w 
 
 Format oparty jest o zasady [Keep a Changelog](https://keepachangelog.com/pl/1.0.0/).
 
+## [1.2.0] - 2026-09-06
+
+### Dodano
+- Pełny system kontroli dostępu opartej na rolach (**Role-Based Access Control - RBAC**):
+  - Moduł `app/core/rbac.py` definiujący atomowe uprawnienia (`Permission`) oraz macierz powiązań z rolami (`ROLE_PERMISSIONS`).
+  - Fabryki zależności FastAPI w `app/core/dependencies.py`: `require_roles` oraz `require_permissions` zwracające szczegółowe błędy `403 Forbidden` przy braku uprawnień.
+  - Endpoint `GET /v1/me/permissions` zwracający bieżącą rolę oraz efektywne uprawnienia zalogowanego użytkownika (dla frontendu do sterowania widocznością UI).
+  - Zabezpieczenie endpointów domenowych (`users`, `workspaces`, `devices`, `tickets`) za pomocą uprawnień `Permission.*`.
+  - Nowy zestaw testów automatycznych `tests/test_rbac.py` testujący uprawnienia ról `admin`, `technician` i `client`.
+
 ## [1.1.0] - 2026-09-06
 
 ### Dodano

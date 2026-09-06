@@ -31,15 +31,31 @@ async def db_session():
         session.add(ws)
         await session.flush()
 
-        user = User(
+        admin_user = User(
             email="test@s247.local",
             hashed_password=hash_password("testpass123"),
-            full_name="Jan Tester",
+            full_name="Jan Tester Admin",
             role=UserRole.ADMIN,
             is_active=True,
             workspace_id=ws.id
         )
-        session.add(user)
+        tech_user = User(
+            email="tech@s247.local",
+            hashed_password=hash_password("techpass123"),
+            full_name="Tomek Technik",
+            role=UserRole.TECHNICIAN,
+            is_active=True,
+            workspace_id=ws.id
+        )
+        client_user = User(
+            email="client@s247.local",
+            hashed_password=hash_password("clientpass123"),
+            full_name="Krzysztof Klient",
+            role=UserRole.CLIENT,
+            is_active=True,
+            workspace_id=ws.id
+        )
+        session.add_all([admin_user, tech_user, client_user])
         await session.commit()
 
         yield session

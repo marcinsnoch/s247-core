@@ -2,6 +2,7 @@ from fastapi import APIRouter, Depends
 from sqlalchemy.ext.asyncio import AsyncSession
 
 from app.core.dependencies import get_current_user
+from app.core.rbac import get_role_permissions
 from app.database.session import get_db
 from app.modules.profile.service import ProfileService
 from app.modules.users.models import User
@@ -14,6 +15,17 @@ router = APIRouter(prefix="/me", tags=["User Profile"])
 async def get_my_profile(current_user: User = Depends(get_current_user)):
     """Retrieve profile details of the authenticated user."""
     return current_user
+
+
+@router.get("/permissions", summary="Get current user role and effective permissions")
+async def get_my_permissions(current_user: User = Depends(get_current_user)):
+    """Retrieve current authenticated user's role and atomic RBAC permissions."""
+    role_str = current_user.role.value if hasattr(current_user.role, "value") else str(current_user.role)
+    perms = [p.value for p in get_role_permissions(current_user.role)]
+    return {
+        "role": role_str,
+        "permissions": sorted(perms),
+    }
 
 
 @router.patch("", response_model=UserResponse, summary="Update current user profile")
